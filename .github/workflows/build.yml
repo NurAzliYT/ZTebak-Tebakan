@@ -22,6 +22,8 @@ jobs:
 
     - name: Set up Android SDK
       run: |
+        echo "Set Permissions"
+        chmod +x gradlew
         echo "Installing Android SDK Command Line Tools"
         sudo apt-get update
         sudo apt-get install -y wget unzip
