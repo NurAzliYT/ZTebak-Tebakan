@@ -1,4 +1,4 @@
-package id.nurazlib.ztebakgambar;
+package id.nurazlib.ztebaktebakan;
 
 public class Question {
     private String questionText;
