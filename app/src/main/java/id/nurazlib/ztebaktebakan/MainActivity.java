@@ -1,5 +1,7 @@
 package id.nurazlib.ztebaktebakan;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.widget.Button;
@@ -14,6 +16,9 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Question> questions;
     private int currentQuestionIndex = 0;
     private int score = 0;
+    private int maxLevel = 34;
     private AdView adView;
 
     @Override
@@ -79,6 +85,58 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (currentQuestionIndex < maxLevel) {
+            saveLevel(currentQuestionIndex + 1); // +1 karena indeks mulai dari 0
+        }
+    }
+
+    private void saveLevel(int level) {
+        if (level >= maxLevel) {
+            // Jika level sudah maksimal, tidak perlu menyimpan data lagi
+            return;
+        }
+
+        SharedPreferences sharedPreferences = getSharedPreferences("GamePrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("last_level", level);
+        editor.apply();
+
+        File directory = new File(getExternalFilesDir(null), "level");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        File file = new File(directory, "last_level.txt");
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(Integer.toString(level).getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int loadLevel() {
+        SharedPreferences sharedPreferences = getSharedPreferences("GamePrefs", MODE_PRIVATE);
+        int lastLevel = sharedPreferences.getInt("last_level", 1); // Default ke level 1 jika tidak ada data
+
+        File directory = new File(getExternalFilesDir(null), "level");
+        File file = new File(directory, "last_level.txt");
+
+        if (file.exists()) {
+            try (FileInputStream fis = new FileInputStream(file)) {
+                byte[] data = new byte[(int) file.length()];
+                fis.read(data);
+                lastLevel = Integer.parseInt(new String(data));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return lastLevel;
+    }
+
     private void loadNextQuestion() {
         if (currentQuestionIndex < questions.size()) {
             Question currentQuestion = questions.get(currentQuestionIndex);
@@ -92,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
                 optionsGroup.addView(radioButton);
             }
         } else {
-            // Selesai, tampilkan pesan akhir
             questionText.setText("Tunggu update terbaru!");
             levelText.setText("Level Selesai!");
             optionsGroup.removeAllViews();
