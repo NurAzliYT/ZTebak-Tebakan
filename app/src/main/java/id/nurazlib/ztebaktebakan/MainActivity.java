@@ -1,4 +1,4 @@
-package id.nurazlib.ztebakgambar;
+package id.nurazlib.ztebaktebakan;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
