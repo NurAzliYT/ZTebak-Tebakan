@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "110139134381",
+    "firebase_url": "https://ztebak-tebakan-default-rtdb.firebaseio.com",
+    "project_id": "ztebak-tebakan",
+    "storage_bucket": "ztebak-tebakan.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:110139134381:android:c9374fc6f3a0b5a9cc5124",
+        "android_client_info": {
+          "package_name": "com.nurazlib.ztebaktebakan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfEba4iR72RA5mwIpgJmfcY2BAQV1pIgY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:110139134381:android:63e9c30ec52298ebcc5124",
+        "android_client_info": {
+          "package_name": "id.nurazlib.ztebaktebakan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfEba4iR72RA5mwIpgJmfcY2BAQV1pIgY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
