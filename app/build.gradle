@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'id.nurazlib.ztebakgambar'
+    namespace 'id.nurazlib.ztebaktebakan'
     compileSdkVersion 33
 
     defaultConfig {
-        applicationId "id.nurazlib.ztebakgambar"
+        applicationId "id.nurazlib.ztebaktebakan"
         minSdkVersion 21
         targetSdkVersion 33
         versionCode 1
