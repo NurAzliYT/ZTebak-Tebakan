@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ZTebak Tebakan</string>
+    <string name="submit">Submit</string>
+    <string name="wait_for_update">Tunggu update terbaru!</string>
+    <string name="level_completed">Level Selesai!</string>
+    <string name="correct">Benar!</string>
+    <string name="incorrect">Salah!</string>
+    <string name="choose_answer">Pilih jawaban dulu!</string>
+</resources>

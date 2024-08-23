@@ -1,0 +1,10 @@
+<resources>
+    <color name="teal_200">#03DAC5</color>
+    <color name="teal_700">#018786</color>
+    <color name="orange">#FF5722</color>
+    <color name="orange_dark">#E64A19</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="background">#F5F5F5</color>
+    <color name="red">#F44336</color>
+</resources>
