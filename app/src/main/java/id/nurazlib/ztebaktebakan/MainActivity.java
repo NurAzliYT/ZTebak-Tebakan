@@ -60,6 +60,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Memuat pertanyaan
         questions = QuestionBank.getQuestions();
+
+        // Memuat level terakhir yang tersimpan
+        currentQuestionIndex = loadLevel() - 1; // -1 karena level disimpan dimulai dari 1
+
+        // Melanjutkan ke pertanyaan terakhir yang belum dijawab
         loadNextQuestion();
 
         // Submit jawaban
