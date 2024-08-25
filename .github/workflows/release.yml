@@ -35,18 +35,18 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t android-build:latest .
+          docker build -t ztebak-tebakan:latest .
 
       - name: Tag Docker image
         run: |
-          docker tag android-build:latest ghcr.io/${{ github.repository_owner }}/android-build:latest
+          docker tag android-build:latest ghcr.io/${{ github.repository_owner }}/ztebak-tebakan:latest
 
       - name: Push Docker image to GHCR
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/android-build:latest
+          docker push ghcr.io/${{ github.repository_owner }}/ztebak-tebakan:latest
 
       - name: Run Docker container
-        run: docker run --rm -v ${{ github.workspace }}:/workspace android-build
+        run: docker run --rm -v ${{ github.workspace }}:/workspace ztebak-tebakan
 
       - name: Upload APK to GitHub Artifacts
         uses: actions/upload-artifact@v3
