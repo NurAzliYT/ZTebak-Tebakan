@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Environment;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Question> questions;
     private int currentQuestionIndex = 0;
     private int score = 0;
-    private int maxLevel = 34;
+    private int maxLevel = 40;
     private AdView adView;
 
     @Override
@@ -96,13 +97,15 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         if (currentQuestionIndex < maxLevel) {
             saveLevel(currentQuestionIndex + 1); // +1 karena indeks mulai dari 0
+        } else {
+            // Jika sudah di level maksimal, simpan data final dan hapus cache
+            saveFinalDataAndClearCache();
         }
     }
 
     private void saveLevel(int level) {
         if (level >= maxLevel) {
-            // Jika level sudah maksimal, tidak perlu menyimpan data lagi
-            return;
+            return; // Jangan menyimpan jika sudah mencapai level maksimal
         }
 
         SharedPreferences sharedPreferences = getSharedPreferences("GamePrefs", MODE_PRIVATE);
@@ -143,8 +146,38 @@ public class MainActivity extends AppCompatActivity {
         return lastLevel;
     }
 
+    private void saveFinalDataAndClearCache() {
+        // Menyimpan data terakhir
+        SharedPreferences sharedPreferences = getSharedPreferences("GamePrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("last_level", maxLevel);
+        editor.apply();
+
+        // Simpan file ke Android/data/id.nurazlib.ztebaktebakan
+        File dataDir = new File(getExternalFilesDir(null), "../data/id.nurazlib.ztebaktebakan");
+        if (!dataDir.exists()) {
+            dataDir.mkdirs();
+        }
+
+        File finalDataFile = new File(dataDir, "final_data.txt");
+        try (FileOutputStream fos = new FileOutputStream(finalDataFile)) {
+            String finalData = "Level terakhir: " + maxLevel + "\nSkor: " + score;
+            fos.write(finalData.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Hapus cache
+        File cacheDir = getCacheDir();
+        if (cacheDir.isDirectory()) {
+            for (File file : cacheDir.listFiles()) {
+                file.delete();
+            }
+        }
+    }
+
     private void loadNextQuestion() {
-        if (currentQuestionIndex < questions.size()) {
+        if (currentQuestionIndex < maxLevel && currentQuestionIndex < questions.size()) {
             Question currentQuestion = questions.get(currentQuestionIndex);
             questionText.setText(currentQuestion.getQuestionText());
             levelText.setText("Level " + (currentQuestionIndex + 1));
@@ -156,24 +189,35 @@ public class MainActivity extends AppCompatActivity {
                 optionsGroup.addView(radioButton);
             }
         } else {
-            questionText.setText("Tunggu update terbaru!");
-            levelText.setText("Level Selesai!");
-            optionsGroup.removeAllViews();
-            submitButton.setEnabled(false);
-            Toast.makeText(this, "Kamu telah menyelesaikan semua level! Skor: " + score, Toast.LENGTH_LONG).show();
+            endGame();
         }
     }
 
     private void checkAnswer(String selectedAnswer) {
-        Question currentQuestion = questions.get(currentQuestionIndex);
-        if (currentQuestion.getCorrectAnswer().equals(selectedAnswer)) {
-            score++;
-            Toast.makeText(this, "Benar!", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Salah! Jawaban yang benar: " + currentQuestion.getCorrectAnswer(), Toast.LENGTH_SHORT).show();
-        }
+        if (currentQuestionIndex < maxLevel) {
+            Question currentQuestion = questions.get(currentQuestionIndex);
+            if (currentQuestion.getCorrectAnswer().equals(selectedAnswer)) {
+                score++;
+                Toast.makeText(this, "Benar!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Salah! Jawaban yang benar: " + currentQuestion.getCorrectAnswer(), Toast.LENGTH_SHORT).show();
+            }
 
-        currentQuestionIndex++;
-        loadNextQuestion();
+            currentQuestionIndex++;
+            loadNextQuestion();
+        } else {
+            endGame();
+        }
+    }
+
+    private void endGame() {
+        questionText.setText("Tunggu update terbaru!");
+        levelText.setText("Level Selesai!");
+        optionsGroup.removeAllViews();
+        submitButton.setEnabled(false);
+        Toast.makeText(this, "Kamu telah menyelesaikan semua level! Skor: " + score, Toast.LENGTH_LONG).show();
+
+        // Simpan data akhir dan bersihkan cache
+        saveFinalDataAndClearCache();
     }
 }
