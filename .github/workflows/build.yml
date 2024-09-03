@@ -35,10 +35,9 @@ jobs:
         yes | $ANDROID_HOME/cmdline-tools/cmdline-tools/bin/sdkmanager --update
         yes | $ANDROID_HOME/cmdline-tools/cmdline-tools/bin/sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
 
-    - name: Decrypt Keystore
-      run: |
-           openssl aes-256-cbc -d -in my-release-key.jks.enc -out my-release-key.jks -k ${{ secrets.KEYSTORE_PASSWORD }}
- 
+    - name: Decrypt JKS file
+      run: openssl aes-256-cbc -d -in my-release-key.jks.enc -out my-release-key.jks -pass pass:${{ secrets.KEYSTORE_PASSWORD }}
+      
     - name: Build with Gradle
       run: ./gradlew assembleRelease
       env:
