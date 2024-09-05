@@ -12,15 +12,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ZTebakTebakan">
 
-        <!-- Main Activity -->
-        <activity android:name=".MainActivity"
-            android:exported="true">
-            
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".SplashActivity" android:exported="@true">
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
+
+    <!-- Intent filter untuk menangani URL dengan scheme khusus -->
+    <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+
+        <!-- Menangani URL dengan scheme ztebaktebakan -->
+        <data android:scheme="ztebaktebakan" />
+    </intent-filter>
+</activity>
 
         <!-- AdMob App ID -->
         <meta-data
