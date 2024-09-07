@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private int score = 0;
     private int maxLevel = 40;
     private AdView adView;
-    private InterstitialAd mInterstitialAd;
+    private InterstitialAd InterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
