@@ -16,6 +16,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.android.gms.ads.LoadAdError;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private int score = 0;
     private int maxLevel = 40;
     private AdView adView;
+    private InterstitialAd mInterstitialAd;
+    private int levelCounter = 0; // Untuk menghitung level yang telah diselesaikan
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +55,12 @@ public class MainActivity extends AppCompatActivity {
         submitButton = findViewById(R.id.submit_button);
         adView = findViewById(R.id.adView);
 
-        // Memuat iklan
+        // Memuat iklan banner
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
+
+        // Memuat iklan interstisial pertama kali
+        loadInterstitialAd();
 
         // Inisialisasi dan mulai musik latar
         backgroundMusic = MediaPlayer.create(this, R.raw.background);
@@ -178,6 +186,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadNextQuestion() {
         if (currentQuestionIndex < maxLevel && currentQuestionIndex < questions.size()) {
+            levelCounter++;
+
+            // Tampilkan iklan interstisial setiap 5 level
+            if (levelCounter % 5 == 0 && mInterstitialAd != null) {
+                mInterstitialAd.show(MainActivity.this); // Tampilkan iklan interstisial
+                loadInterstitialAd(); // Memuat iklan baru setelah yang lama ditampilkan
+            }
+
             Question currentQuestion = questions.get(currentQuestionIndex);
             questionText.setText(currentQuestion.getQuestionText());
             levelText.setText("Level " + (currentQuestionIndex + 1));
@@ -219,5 +235,23 @@ public class MainActivity extends AppCompatActivity {
 
         // Simpan data akhir dan bersihkan cache
         saveFinalDataAndClearCache();
+    }
+
+    // Memuat iklan interstisial
+    private void loadInterstitialAd() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        InterstitialAd.load(this, "ca-app-pub-4186599691041011/7680150324", adRequest, new InterstitialAdLoadCallback() {
+            @Override
+            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                // Iklan interstisial berhasil dimuat
+                mInterstitialAd = interstitialAd;
+            }
+
+            @Override
+            public void onAdFailedToLoad(@NonNull LoadAdError adError) {
+                // Gagal memuat iklan
+                mInterstitialAd = null;
+            }
+        });
     }
 }
