@@ -21,8 +21,11 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.InterstitialAdLoadCallback;
 import com.google.android.gms.ads.MobileAds;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
-import java.util.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -254,3 +257,7 @@ public class MainActivity extends AppCompatActivity {
         return sharedPreferences.getInt("last_level", 1); // Default ke level 1 jika tidak ada data
     }
 }
+/**
+skskdjdj
+jssjdjedjdjdkdjdjdjdjxjdjdxjndnxncndndndj yang di perlukan untuk game I dan ada 
+    */
