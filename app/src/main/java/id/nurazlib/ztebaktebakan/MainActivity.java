@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadRewardedAd() {
         AdRequest adRequest = new AdRequest.Builder().build();
-        RewardedAd.load(this, "ca-app-pub-4186599691041011/xxxxxxxxxx", adRequest, new RewardedAdLoadCallback() {
+        RewardedAd.load(this, "ca-app-pub-4186599691041011/8469643922", adRequest, new RewardedAdLoadCallback() {
             @Override
             public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
                 mRewardedAd = rewardedAd;
