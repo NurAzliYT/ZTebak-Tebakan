@@ -38,7 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private int score = 0;
     private int maxLevel = 40;
     private AdView adView;
-    private InterstitialAd InterstitialAd;
+    private InterstitialAd mInterstitialAd;
+    private int levelCounter = 0; // Untuk menghitung level yang telah diselesaikan
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadInterstitialAd() {
         AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(this, "AD_UNIT_ID", adRequest, new InterstitialAdLoadCallback() {
+        InterstitialAd.load(this, "ca-app-pub-4186599691041011/7680150324", adRequest, new InterstitialAdLoadCallback() {
             @Override
             public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
                 // Iklan interstisial berhasil dimuat
