@@ -51,6 +51,7 @@ public class QuestionBank {
         questions.add(new Question("Apa nama lautan terbesar di dunia?", shuffleOptions(new String[]{"Samudra Pasifik", "Samudra Atlantik", "Samudra Hindia", "Samudra Arktik"}), "Samudra Pasifik"));
         questions.add(new Question("Siapa penemu bola lampu?", shuffleOptions(new String[]{"Thomas Edison", "Nikola Tesla", "Alexander Graham Bell", "Benjamin Franklin"}), "Thomas Edison"));
         questions.add(new Question("Hewan apa yang dikenal sebagai 'raja hutan'?", shuffleOptions(new String[]{"Singa", "Harimau", "Gajah", "Serigala"}), "Singa"));
+        questions.add(new Question("Apa ibu kota Australia", shuffleOptions(new String[]{"Berlin", "Canberra", "Wina", "Ottawa"}), "Canberra"));
 
         return questions;
     }
