@@ -29,7 +29,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 
-import java.util.*;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Menemukan TextView di dalam custom popup layout
         TextView hintTextView = popupView.findViewById(R.id.hint_text);
-        hintTextView.setText("Jawaban Benar: " + hint);  // Set hint sebagai jawaban benar
+        hintTextView.setText("Hint: " + hint);  // Set hint
 
         // Menampilkan popup di tengah-tengah layar
         popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
