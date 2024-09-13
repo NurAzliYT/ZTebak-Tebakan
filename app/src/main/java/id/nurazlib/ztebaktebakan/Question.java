@@ -6,7 +6,7 @@ public class Question {
     private String correctAnswer;
     private String hint;
 
-    public Question(String questionText, String[] options, String correctAnswer) {
+    public Question(String questionText, String[] options, String correctAnswer, String hint) {
         this.questionText = questionText;
         this.options = options;
         this.correctAnswer = correctAnswer;
