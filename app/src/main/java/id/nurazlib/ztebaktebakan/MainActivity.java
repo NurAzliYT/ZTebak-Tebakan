@@ -116,8 +116,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Tombol tonton iklan
         watchAdButton.setOnClickListener(view -> {
-            if (mRewardedAd != null) {
-                mRewardedAd.show(MainActivity.this, rewardItem -> {
+            if (rewardedAd != null) {
+                rewardedAd.show(MainActivity.this, rewardItem -> {
                     hintCounter++;
                     updateHintCounter();
                 });
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onAdFailedToLoad(LoadAdError loadAdError) {
-                mRewardedAd = null;
+                rewardedAd = null;
             }
         });
     }
