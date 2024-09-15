@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private int maxLevel = 40;
     private AdView adView;
     private InterstitialAd mInterstitialAd;
-    private RewardedAd mRewardedAd;
+    private RewardedAd rewardedAd;
     private int hintCounter = 3; // Default jumlah hint yang dimiliki
 
     @Override
@@ -201,11 +201,11 @@ public class MainActivity extends AppCompatActivity {
         RewardedAd.load(this, "ca-app-pub-4186599691041011/8469643922", adRequest, new RewardedAdLoadCallback() {
             @Override
             public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
-                mRewardedAd = rewardedAd;
-                mRewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                rewardedAd = rewardedAd;
+                rewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                     @Override
                     public void onAdShowedFullScreenContent() {
-                        mRewardedAd = null;
+                        rewardedAd = null;
                     }
 
                     @Override
@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onAdFailedToShowFullScreenContent(AdError adError) {
-                        mRewardedAd = null;
+                        rewardedAd = null;
                     }
                 });
             }
