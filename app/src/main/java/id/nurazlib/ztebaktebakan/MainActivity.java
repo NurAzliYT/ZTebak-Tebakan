@@ -2,6 +2,7 @@ package id.nurazlib.ztebaktebakan;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -43,18 +44,18 @@ public class MainActivity extends AppCompatActivity {
     private int maxLevel = 40;
     private AdView adView;
     private InterstitialAd mInterstitialAd;
-    private RewardedAd rewardedAd;
-    private int hintCounter = 3; // Default jumlah hint yang dimiliki
+    private RewardedAd mRewardedAd; // Diganti menjadi mRewardedAd
+    private int hintCounter = 3; 
+    private AudioManager audioManager;
+    private int currentMusicIndex = 1; // Indeks musik saat ini
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Inisialisasi Mobile Ads SDK
-        MobileAds.initialize(this, initializationStatus -> {});
+        MobileAds.initialize(this, initializationStatus -> { });
 
-        // Referensi UI
         questionText = findViewById(R.id.question_text);
         levelText = findViewById(R.id.level_text);
         hintCounterText = findViewById(R.id.hint_counter);
@@ -64,34 +65,25 @@ public class MainActivity extends AppCompatActivity {
         watchAdButton = findViewById(R.id.watch_ad_button);
         adView = findViewById(R.id.adView);
 
-        // Memuat iklan banner
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
 
-        // Inisialisasi dan mulai musik latar
-        backgroundMusic = MediaPlayer.create(this, R.raw.background);
-        backgroundMusic.setLooping(true);
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+        // Inisialisasi musik pertama
+        backgroundMusic = MediaPlayer.create(this, R.raw.background_music1);
+        backgroundMusic.setOnCompletionListener(mp -> playNextMusic()); // Memutar musik selanjutnya saat musik selesai
         backgroundMusic.start();
 
-        // Memuat pertanyaan
         questions = QuestionBank.getQuestions();
 
-        // Memuat level terakhir yang tersimpan
-        currentQuestionIndex = loadLevel() - 1; // -1 karena level disimpan dimulai dari 1
+        currentQuestionIndex = loadLevel() - 1; 
 
-        // Melanjutkan ke pertanyaan terakhir yang belum dijawab
         loadNextQuestion();
-
-        // Memuat iklan interstisial
         loadInterstitialAd();
-
-        // Memuat iklan rewarded
         loadRewardedAd();
-
-        // Update counter hint
         updateHintCounter();
 
-        // Submit jawaban
         submitButton.setOnClickListener(view -> {
             int selectedId = optionsGroup.getCheckedRadioButtonId();
             if (selectedId != -1) {
@@ -103,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Tombol hint
         hintButton.setOnClickListener(view -> {
             if (hintCounter > 0) {
                 showHintPopup(questions.get(currentQuestionIndex).getHint());
@@ -114,12 +105,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Tombol tonton iklan
         watchAdButton.setOnClickListener(view -> {
-            if (rewardedAd != null) {
-                rewardedAd.show(MainActivity.this, rewardItem -> {
+            if (mRewardedAd != null) { // Diganti menjadi mRewardedAd
+                mRewardedAd.show(MainActivity.this, rewardItem -> { // Diganti menjadi mRewardedAd
                     hintCounter++;
                     updateHintCounter();
+                    loadRewardedAd(); 
                 });
             } else {
                 Toast.makeText(MainActivity.this, "Iklan belum siap. Coba lagi nanti.", Toast.LENGTH_SHORT).show();
@@ -130,21 +121,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // Berhenti musik saat aplikasi masuk ke background
-        if (backgroundMusic != null && backgroundMusic.isPlaying()) {
-            backgroundMusic.pause();
-        }
-        // Simpan level terakhir yang dimainkan
-        saveLevel(currentQuestionIndex + 1); // +1 karena indeks mulai dari 0
+        pauseBackgroundMusic();
+        saveLevel(currentQuestionIndex + 1); 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Melanjutkan musik saat aplikasi kembali aktif
-        if (backgroundMusic != null && !backgroundMusic.isPlaying()) {
-            backgroundMusic.start();
-        }
+        resumeBackgroundMusic();
     }
 
     @Override
@@ -167,24 +151,20 @@ public class MainActivity extends AppCompatActivity {
                 mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                     @Override
                     public void onAdShowedFullScreenContent() {
-                        if (backgroundMusic != null && backgroundMusic.isPlaying()) {
-                            backgroundMusic.pause();
-                        }
+                        pauseBackgroundMusic();
+                        mInterstitialAd = null; 
                     }
 
                     @Override
                     public void onAdDismissedFullScreenContent() {
-                        if (backgroundMusic != null) {
-                            backgroundMusic.start();
-                        }
-                        loadInterstitialAd();
+                        resumeBackgroundMusic();
+                        loadInterstitialAd(); 
                     }
 
                     @Override
                     public void onAdFailedToShowFullScreenContent(AdError adError) {
-                        if (backgroundMusic != null) {
-                            backgroundMusic.start();
-                        }
+                        resumeBackgroundMusic();
+                        loadInterstitialAd(); 
                     }
                 });
             }
@@ -200,29 +180,30 @@ public class MainActivity extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
         RewardedAd.load(this, "ca-app-pub-4186599691041011/8469643922", adRequest, new RewardedAdLoadCallback() {
             @Override
-            public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
-                rewardedAd = rewardedAd;
-                rewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+            public void onAdLoaded(@NonNull RewardedAd ad) {
+                mRewardedAd = ad; // Diganti menjadi mRewardedAd
+                mRewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() { // Diganti menjadi mRewardedAd
                     @Override
                     public void onAdShowedFullScreenContent() {
-                        rewardedAd = null;
+                        mRewardedAd = null; // Diganti menjadi mRewardedAd
                     }
 
                     @Override
                     public void onAdDismissedFullScreenContent() {
-                        loadRewardedAd();
+                        loadRewardedAd(); 
                     }
 
                     @Override
                     public void onAdFailedToShowFullScreenContent(AdError adError) {
-                        rewardedAd = null;
+                        mRewardedAd = null; // Diganti menjadi mRewardedAd
+                        loadRewardedAd(); 
                     }
                 });
             }
 
             @Override
             public void onAdFailedToLoad(LoadAdError loadAdError) {
-                rewardedAd = null;
+                mRewardedAd = null; // Diganti menjadi mRewardedAd
             }
         });
     }
@@ -231,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         if (currentQuestionIndex < maxLevel && currentQuestionIndex < questions.size()) {
             Question currentQuestion = questions.get(currentQuestionIndex);
             questionText.setText(currentQuestion.getQuestionText());
-            levelText.setText("Level " + (currentQuestionIndex + 1));
+            levelText.setText(String.format("Level %d", (currentQuestionIndex + 1)));
 
             optionsGroup.removeAllViews();
             for (String option : currentQuestion.getOptions()) {
@@ -240,7 +221,6 @@ public class MainActivity extends AppCompatActivity {
                 optionsGroup.addView(radioButton);
             }
 
-            // Tampilkan iklan interstisial setiap 5 level
             if (mInterstitialAd != null && currentQuestionIndex % 5 == 0 && currentQuestionIndex != 0) {
                 mInterstitialAd.show(MainActivity.this);
             }
@@ -274,33 +254,26 @@ public class MainActivity extends AppCompatActivity {
         hintButton.setEnabled(false);
     }
 
-    // Method untuk menampilkan hint di dalam popup
     private void showHintPopup(String hint) {
-        // Inflate layout custom popup
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.custom_popup_hint, null);
 
-        // Buat PopupWindow
         final PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
 
-        // Menemukan TextView di dalam custom popup layout
         TextView hintTextView = popupView.findViewById(R.id.hint_text);
-        hintTextView.setText("Hint: " + hint);  // Set hint
+        hintTextView.setText("Hint: " + hint); 
 
-        // Menampilkan popup di tengah-tengah layar
         popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
 
-        // Tombol tutup popup
         Button closePopupButton = popupView.findViewById(R.id.close_popup_button);
         closePopupButton.setOnClickListener(view -> popupWindow.dismiss());
     }
 
-    // Method untuk mengupdate jumlah hint
     private void updateHintCounter() {
-        hintCounterText.setText("Hint: " + hintCounter);
+        hintCounter = Math.max(0, hintCounter); 
+        hintCounterText.setText(String.format("Hint: %d", hintCounter));
     }
 
-    // Method untuk menyimpan level yang sedang dimainkan ke SharedPreferences
     private void saveLevel(int level) {
         SharedPreferences sharedPreferences = getSharedPreferences("GameData", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -308,9 +281,32 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    // Method untuk memuat level yang terakhir kali dimainkan
     private int loadLevel() {
         SharedPreferences sharedPreferences = getSharedPreferences("GameData", MODE_PRIVATE);
-        return sharedPreferences.getInt("last_level", 1); // Default level 1 jika belum ada data yang disimpan
+        return sharedPreferences.getInt("last_level", 1); 
+    }
+
+    private void pauseBackgroundMusic() {
+        if (backgroundMusic != null && backgroundMusic.isPlaying()) {
+            backgroundMusic.pause();
+        }
+    }
+
+    private void resumeBackgroundMusic() {
+        if (backgroundMusic != null && !backgroundMusic.isPlaying() && audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) > 0) {
+            backgroundMusic.start();
+        }
+    }
+
+    // Method untuk memutar musik selanjutnya
+    private void playNextMusic() {
+        currentMusicIndex = (currentMusicIndex == 1) ? 2 : 1; // Ganti indeks musik
+
+        int nextMusicResId = (currentMusicIndex == 1) ? R.raw.background_music1 : R.raw.background_music2; // Tentukan resource musik
+
+        backgroundMusic.reset(); // Reset MediaPlayer
+        backgroundMusic = MediaPlayer.create(this, nextMusicResId); // Buat MediaPlayer baru dengan musik selanjutnya
+        backgroundMusic.setOnCompletionListener(mp -> playNextMusic()); // Set listener untuk memutar musik selanjutnya
+        backgroundMusic.start(); // Mulai musik
     }
 }
