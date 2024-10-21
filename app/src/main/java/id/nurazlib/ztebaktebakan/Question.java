@@ -60,33 +60,3 @@ public class Question {
         Collections.shuffle(this.options);
     }
 }
-    }
-
-    public Question(String questionText, String[] options, String correctAnswer, String hint) {
-        this(questionText, List.of(options), correctAnswer, hint);
-    }
-
-    public String getQuestionText() {
-        return questionText;
-    }
-
-    public List<String> getOptions() {
-        return options;
-    }
-
-    public String getCorrectAnswer() {
-        return correctAnswer;
-    }
-
-    public String getHint() {
-        return hint;
-    }
-
-    public boolean isCorrectAnswer(String answer) {
-        return correctAnswer.equals(answer);
-    }
-
-    private void shuffleOptions() {
-        Collections.shuffle(this.options);
-    }
-}
