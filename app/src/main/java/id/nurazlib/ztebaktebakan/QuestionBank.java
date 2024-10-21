@@ -90,11 +90,18 @@ public class QuestionBank {
             shuffleOptions(new String[]{"Mars", "Venus", "Jupiter", "Saturnus"}), 
             "Mars", "Dikenal karena warna tanahnya yang merah."));
 
+        questions.add(new Question("Presiden Ke-3 Indonesia?",
+            shuffleOptions(new String[]{"Soekarno", "Gus Dur", "Jokowi", "B.J. Habibie", "Menjawab Selama 1 tahun lebih."));
         return questions;
     }
 
     private static String[] shuffleOptions(String[] options) {
-        List<String> optionList = Arrays.asList(options);
+        // Validasi input
+        if (options == null || options.length == 0) {
+            return new String[0]; // Mengembalikan array kosong jika options null atau kosong
+        }
+
+        List<String> optionList = new ArrayList<>(List.of(options)); // Membuat List baru yang bisa diubah
         Collections.shuffle(optionList);
         return optionList.toArray(new String[0]);
     }
