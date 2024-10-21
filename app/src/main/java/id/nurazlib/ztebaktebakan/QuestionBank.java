@@ -91,7 +91,8 @@ public class QuestionBank {
             "Mars", "Dikenal karena warna tanahnya yang merah."));
 
         questions.add(new Question("Presiden Ke-3 Indonesia?",
-            shuffleOptions(new String[]{"Soekarno", "Gus Dur", "Jokowi", "B.J. Habibie", "Menjawab Selama 1 tahun lebih."));
+            shuffleOptions(new String[]{"Soekarno", "Gus Dur", "Jokowi", "B.J. Habibie"}),
+            "B.J Habibie", "Menjabat Selama 1 tahun lebih."));
         return questions;
     }
 
