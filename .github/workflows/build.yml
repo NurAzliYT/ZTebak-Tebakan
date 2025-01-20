@@ -2,9 +2,7 @@ name: Build APK
 
 on:
   push:
-    branches: [ "stable" ]
   pull_request:
-    branches: [ "stable" ]
 
 jobs:
   build:
@@ -39,7 +37,7 @@ jobs:
       run: openssl aes-256-cbc -d -in my-release-key.jks.enc -out my-release-key.jks -pass pass:${{ secrets.KEYSTORE_PASSWORD }}
       
     - name: Build with Gradle
-      run: ./gradlew assembleRelease
+      run: ./gradlew assembleDebug
       env:
         KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
@@ -49,4 +47,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: app-all-folder-and-file
-        path: app/build/outputs
+        path: app/build/outputs/apk/debug
