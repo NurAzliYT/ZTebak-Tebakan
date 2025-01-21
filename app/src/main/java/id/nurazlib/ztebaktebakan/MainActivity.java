@@ -54,6 +54,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        try {
+            File logFile = new File(getExternalFilesDir(null), "app_log.txt");
+            FileWriter writer = new FileWriter(logFile, true);
+            writer.append("Log dimulai pada: ").append(new Date().toString()).append("\n");
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         MobileAds.initialize(this, initializationStatus -> { });
 
         questionText = findViewById(R.id.question_text);
@@ -70,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
-        // Inisialisasi musik pertama
         backgroundMusic = MediaPlayer.create(this, R.raw.background_music1);
         backgroundMusic.setOnCompletionListener(mp -> playNextMusic()); // Memutar musik selanjutnya saat musik selesai
         backgroundMusic.start();
